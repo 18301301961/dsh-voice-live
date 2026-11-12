@@ -1,0 +1,41 @@
+{
+  "name": "@local/voice-live",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Live streaming dictation for the DSH Web composer: SenseVoice behind Silero VAD, live captions, optional model-assisted correction",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "dsh": ">=0.2.2-rc.1"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./client": "./client.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "client.js",
+    "engine.mjs",
+    "worker.mjs",
+    "polish.mjs",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  }
+}

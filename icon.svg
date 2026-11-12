@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Streaming voice input">
+  <defs>
+    <linearGradient id="vlg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4d6bfe"/>
+      <stop offset="1" stop-color="#7c4dff"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#vlg)"/>
+  <rect x="27" y="15" width="10" height="20" rx="5" fill="#ffffff"/>
+  <path d="M20.5 30.5a.9.9 0 0 1 1.8 0 9.7 9.7 0 0 0 19.4 0 .9.9 0 0 1 1.8 0 11.5 11.5 0 0 1-10.6 11.4v4.1a.9.9 0 0 1-1.8 0v-4.1a11.5 11.5 0 0 1-10.6-11.4Z" fill="#ffffff"/>
+  <g fill="#ffffff" opacity="0.85">
+    <rect x="13" y="45" width="3.2" height="6" rx="1.6"/>
+    <rect x="19.4" y="43.5" width="3.2" height="9" rx="1.6"/>
+    <rect x="25.8" y="45.5" width="3.2" height="5" rx="1.6"/>
+    <rect x="32.2" y="43.5" width="3.2" height="9" rx="1.6"/>
+    <rect x="38.6" y="45.5" width="3.2" height="5" rx="1.6"/>
+    <rect x="45" y="43.5" width="3.2" height="9" rx="1.6"/>
+    <rect x="51.4" y="45" width="3.2" height="6" rx="1.6"/>
+  </g>
+</svg>

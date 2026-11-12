@@ -1,0 +1,15 @@
+# Live streaming dictation: the Host owns a local SenseVoice engine behind
+# Silero VAD and exposes same-origin routes the composer streams audio to.
+- insert:
+    - id: voice-live
+      name: '@local/voice-live'
+      config:
+        language: zh
+        threads: 4
+        # final: correct the finished transcript with the configured model; off: local text only.
+        polish: final
+        # Terms the recognizer tends to misspell; they are passed to the correction pass.
+        vocabulary: []
+        # Extra sentence appended to the correction instructions, for example
+        # '人名与项目名按下方词表书写。'
+        # polishInstructions: ''

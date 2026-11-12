@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Streaming voice input",
+    "description": "Turns speech into text in the composer while you talk: words appear live, pauses settle them into sentences, and the finished transcript is corrected locally then by your model before it lands in the draft."
+  }
+}
