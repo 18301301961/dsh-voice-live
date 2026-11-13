@@ -25,15 +25,13 @@ Recognition runs on your machine — audio never leaves the computer.
 
 ## Install
 
-### From npm (after the first publish)
+### From npm
 
 Install the bundle by its package name — in the Plugins page, or by asking your agent to install it:
 
 ```text
-@your-scope/dsh-voice-live
+dsh-voice-live
 ```
-
-> Placeholder: replace the scope with the published name. The browser module id in `client.js` must stay equal to the package name.
 
 ### From this repository
 

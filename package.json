@@ -1,10 +1,27 @@
 {
-  "name": "@local/voice-live",
+  "name": "dsh-voice-live",
   "version": "1.1.0",
-  "private": true,
   "description": "Live streaming dictation for the DSH Web composer: SenseVoice behind Silero VAD, live captions, optional model-assisted correction",
   "license": "MIT",
   "type": "module",
+  "author": "18301301961",
+  "homepage": "https://github.com/18301301961/dsh-voice-live#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/18301301961/dsh-voice-live.git"
+  },
+  "bugs": {
+    "url": "https://github.com/18301301961/dsh-voice-live/issues"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "voice-input",
+    "speech-to-text",
+    "sensevoice",
+    "dictation"
+  ],
   "engines": {
     "dsh": ">=0.2.2-rc.1"
   },

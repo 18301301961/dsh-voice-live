@@ -2,7 +2,7 @@
 # Silero VAD and exposes same-origin routes the composer streams audio to.
 - insert:
     - id: voice-live
-      name: '@local/voice-live'
+      name: 'dsh-voice-live'
       config:
         language: zh
         threads: 4

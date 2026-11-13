@@ -1,6 +1,6 @@
 # 发布与分发
 
-当前包名是 `@local/voice-live`（`private: true`），从本地目录安装。要让别人用上，按下面任一条路走。
+包名是 `dsh-voice-live`，从本地目录安装。要让别人用上，按下面任一条路走。
 
 ## 一、直接分发（最快，不需要账号）
 
@@ -8,18 +8,27 @@
 2. 对方把它作为 DSH bundle 安装（插件管理器 `install_bundle` 传目录绝对路径，或直接让智能体装）。
 3. 对方首次使用时，插件会请求 DSH 自带的语音服务下载 SenseVoice 模型（约 240 MB），显示进度，完成后自动开始录音。
 
-## 二、发布到 npm（别人一条命令安装）
+## 二、发布到 npm
 
-1. 把 `package.json` 里的 `name` 换成自己的作用域，例如 `@yourname/dsh-voice-live`，并去掉 `"private": true`。
-2. **客户端模块 id 必须与包名一致**：`client.js` 第一行要是 `id: '@yourname/dsh-voice-live'`，不一致会导致浏览器模块加载不出来。
-3. 发布：
+包名已经是 `dsh-voice-live`，清单也准备好了，登录后一条命令即可：
 
-   ```bash
-   npm login
-   npm publish --access public
-   ```
+```bash
+npm login          # 或者把 automation token 写进 ~/.npmrc
+npm publish --access public
+```
+
+本机没有 npm CLI（只有 pnpm）时，等价做法：
+
+```bash
+# 认证：在 npmjs.com 生成 Automation token，然后
+echo '//registry.npmjs.org/:_authToken=<token>' >> ~/.npmrc
+# 用 pnpm 发布，不需要 npm
+pnpm publish --access public --no-git-checks
+```
 
 4. 别人用这个包名安装（插件页或让智能体安装）。
+
+**如果你是 fork 后发布**：先改包名——`package.json` 的 `name`、`client.js` 第一行的 `id` 必须一致（不一致浏览器模块加载不出来），并同步 `author` / `repository` / `bugs`。
 
 记得让 `git tag v<version>`、`package.json` 的 `version` 和 Release 说明保持一致。
 

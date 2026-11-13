@@ -24,15 +24,13 @@ DeepSeek Harness 的**实时语音输入**插件：在输入框旁提供「边�
 
 ## 安装
 
-### 从 npm 安装（发布之后）
+### 从 npm 安装
 
 用包名安装（插件页，或让智能体安装）：
 
 ```text
-@your-scope/dsh-voice-live
+dsh-voice-live
 ```
-
-> 占位：正式发布后把作用域换成真实包名；`client.js` 里的浏览器模块 id 必须与包名一致。
 
 ### 从仓库安装
 
