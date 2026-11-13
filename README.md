@@ -1,70 +1,82 @@
-# 实时语音输入（@local/voice-live）
+# dsh-voice-live
 
-在输入框旁提供「边说边出字」的语音转写：说话时文字实时出现，停顿处自动成句，点「完成」后直接写入草稿。
-识别全部在**本机**运行，音频不上传任何服务器。
+Live streaming voice input for the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web composer.
 
-## 使用
+Speak, and words appear while you talk; press Done and the transcript is corrected once, then inserted into your draft.
+Recognition runs on your machine — audio never leaves the computer.
 
-1. 刷新页面（Ctrl+R），让新的客户端插件加载。
-2. 输入框右侧、发送按钮左边会出现一个麦克风按钮（鼠标悬停时后台就开始加载模型）。
-3. 点一下开始说话：输入框下方出现实时字幕条，灰色文字是「正在识别的这一句」，正常颜色是已确定的句子。
-4. 点「完成」把整段文字写进输入框；点「✕」或按 Esc 取消。
-5. 如果输入框内容在识别期间被改动，文字会保留在字幕条上，点「插入到输入框」即可写入光标处。
-6. 首次使用且本机还没有模型时，会先提示「正在准备识别模型」，下载完成后自动开始说话，无需手动操作。
+[中文说明](README.zh.md) · [Releases](https://github.com/18301301961/dsh-voice-live/releases)
 
-> 官方「语音输入」插件仍然启用，输入框里会有两个麦克风。二者不冲突，可对比后任意选择；若要只保留本插件，在「插件」页停用 `语音输入（Voice input）` 即可（本插件复用它已经下载好的模型，停用不影响使用）。
+> The live caption card sits above the composer: settled sentences in normal color, the sentence being recognized in grey.
 
-## 识别之后的二次校对
+## Features
 
-点「完成」时，本机会先把整段文字识别出来，再交给**你当前配置的模型**做一次最小必要的校对：
-修同音字（查件→插件）、修术语与英文拼写（拼森→Python、微普→WebP）、补标点与数字写法。
-默认只做「最小修改」，不允许改写措辞；如果模型不可用、超时或返回的内容与原文差异过大，就**原样使用本地识别结果**，不会阻塞写入。
+- **Streaming captions** — the sentence in progress is re-decoded on a sliding window every ~0.5–0.8 s.
+- **Sentence-level final decode** — when Silero VAD detects an endpoint, the complete sentence is decoded again, so final quality equals whole-clip decoding.
+- **Clean audio path** — 16 kHz PCM straight from the microphone with browser echo cancellation, noise suppression and AGC disabled; SenseVoice ITN (digits) and punctuation enabled.
+- **Optional model-assisted correction** — a minimal-edit pass fixes homophones (查件 → 插件), product names (拼森 → Python), digits and punctuation. It keeps your wording, and silently falls back to the local transcript on timeout or implausible output.
+- **No manual model setup** — the first use asks DSH's own speech service to prepare the SenseVoice model, shows progress, then starts recording automatically.
 
-- 关掉校对：配置 `polish: off`。
-- 提升专有名词准确率：把常出现的词写进 `vocabulary`，例如 `['DSH', 'Cordis', '工作树', 'ylpt']`。
-- 隐私说明：音频始终只在本机；开了校对后，**转写出来的文字**会发给你配置的模型——这段文字本来也是要发出去的，不构成额外的外泄面。
+## Requirements
 
-## 和官方「语音输入」插件的区别
+- DSH Desktop `0.2.2-rc.1` or newer. Tested on Windows x64; macOS and Linux are expected to work because the engine is resolved from the installation, but are untested.
+- No npm dependencies: `sherpa-onnx` comes from the DSH installation and the model from DSH's speech service.
+- About 240 MB of model on disk and ~400 MB RAM while the engine is warm (released after `idleTimeoutMs`).
 
-| | 官方插件 | 本插件 |
+## Install
+
+Not on npm yet. Clone this repository and install the directory as a DSH bundle — either through the plugin manager with the absolute path, or by asking your agent to install it:
+
+```text
+git clone https://github.com/18301301961/dsh-voice-live.git
+```
+
+Reload the page once after installing; the microphone button appears to the left of the send button.
+
+## Usage
+
+1. Hover the microphone to warm the engine (~3–4 s, once per idle period).
+2. Click it and speak: settled sentences render in normal color, the sentence in progress in grey with a caret.
+3. **Done** inserts the text at the cursor; **✕** or `Esc` discards it.
+4. If the composer changed during dictation, the transcript stays on the card and **Insert into composer** writes it at the current cursor.
+
+## Configuration
+
+The bundle row lives in `cordis.patch.yml`:
+
+| Field | Default | Meaning |
 |---|---|---|
-| 出字时机 | 点停止后整段转写 | 说话过程中每 ~0.5–0.8 秒刷新一次 |
-| 切分方式 | 整段录音按 VAD 分段后批量送入 | 流式送入，VAD 断句后立即定稿该句 |
-| 音频路径 | MediaRecorder → 解码 → WAV | 浏览器直接 16 kHz PCM，关闭回声消除/降噪/自动增益 |
-| 一句的长短 | 受分段策略与时长上限影响 | 每句独立解码，句间不串扰；超过 12 秒强制断句 |
-| 数字与标点 | 依 provider 配置 | 显式开启 SenseVoice 的 ITN（数字规整）与标点 |
-| 错字/术语 | 无 | 可选模型校对，本地失败时静默回退 |
+| `language` | `zh` | `auto`, `zh`, `en`, `yue`, `ja`, `ko` |
+| `threads` | `4` | ONNX Runtime threads |
+| `partialIntervalMs` | `480` | Minimum live-caption refresh interval; widens automatically with decode cost |
+| `partialWindowSeconds` | `6` | Audio window used for the sentence in progress |
+| `vadThreshold` | `0.5` | Silero VAD threshold; raise it in noisy rooms |
+| `minSilenceSeconds` | `0.35` | Silence that ends a sentence |
+| `maxSpeechSeconds` | `12` | Longest continuous sentence before a forced break |
+| `idleTimeoutMs` | `300000` | Release the engine after this idle time |
+| `polish` | `final` | `final` corrects the transcript once at the end; `off` keeps the local text |
+| `vocabulary` | `[]` | Terms the recognizer tends to misspell, for example `[DSH, Cordis]` |
+| `polishInstructions` | empty | One extra sentence appended to the correction prompt |
+| `polishMaxLatencyMs` | `8000` | Correction timeout; on timeout the local text is used |
 
-## 配置
+## How it works
 
-插件的配置行在 `cordis.patch.yml` 里，可选项：
+- `engine.mjs` — Silero VAD segmentation plus SenseVoice decoding; the in-progress sentence is re-decoded on a sliding window, the finished sentence once on its complete audio.
+- `worker.mjs` — a child process (Electron Node mode) hosting the engine on a random loopback port with a per-process token, so model loading never blocks the Host.
+- `index.js` — the `/voice-live/*` routes (same-origin and `x-voice-live` checks), sessions, warm-up, model preparation, audio forwarding and finish handling.
+- `polish.mjs` — the correction pass: cheapest reasoning effort, temperature 0, hard timeout, and two guards (length ratio and character overlap) that reject rewrites.
+- `client.js` — AudioWorklet capture (linear resampling to 16 kHz when needed), the caption card and draft insertion.
 
-| 字段 | 默认 | 说明 |
-|---|---|---|
-| `language` | `zh` | `auto` / `zh` / `en` / `yue` / `ja` / `ko` |
-| `threads` | `4` | ONNX Runtime 线程数 |
-| `partialIntervalMs` | `480` | 实时字幕的最小刷新间隔（实际会按解码耗时自动放宽） |
-| `partialWindowSeconds` | `6` | 正在说的这一句参与实时解码的最大窗口 |
-| `vadThreshold` | `0.5` | Silero VAD 阈值，噪音大时可调到 `0.6` |
-| `minSilenceSeconds` | `0.35` | 判定一句结束的最短静音 |
-| `maxSpeechSeconds` | `12` | 连续说话的最长切分 |
-| `idleTimeoutMs` | `300000` | 空闲多久后释放识别进程（模型常驻内存约 400 MB） |
-| `polish` | `final` | `final` 收尾时用模型校对一次；`off` 只用本地结果 |
-| `vocabulary` | `[]` | 供校对使用的专有名词表，如 `[DSH, Cordis, 工作树]` |
-| `polishInstructions` | 空 | 追加到校对提示词的一句话，例如「人名按词表书写」 |
-| `polishMaxLatencyMs` | `8000` | 校对超时，超时直接用本地结果 |
+## Privacy
 
-## 实现
+Audio is decoded locally and never uploaded. With `polish: final`, only the finished text is sent to the model configured in DSH — which is where that text was headed anyway.
 
-- `engine.mjs`：Silero VAD 流式分段 + SenseVoiceSmall 解码。当前句按 `partialWindowSeconds` 滑动窗口反复解码产生实时字幕；VAD 判定一句结束后，对该句完整音频重新解码一次作为定稿，因此最终质量等于整段批量识别的质量。
-- `worker.mjs`：独立子进程（Electron Node 模式）承载引擎，监听 `127.0.0.1` 随机端口，用随机 token 鉴权；模型加载不阻塞主进程。
-- `index.js`：注册 `/voice-live/*` 路由（校验 `x-voice-live` 请求头与同源 Origin），负责会话、预热、模型准备、音频转发与收尾。
-- `polish.mjs`：收尾校对。优先用该会话最近一次请求的模型，其次用默认模型；强制最低推理档、`temperature: 0`、带超时，并用「长度比例 + 字符重合率」两道校验拒绝改写。
-- `client.js`：麦克风采集（AudioWorklet，必要时线性重采样到 16 kHz）、实时字幕条与写入草稿。
+## Limitations
 
-模型默认复用 `~/.dsh/speech-to-text/sensevoice/models`；缺失时通过 DSH 自带的语音服务触发下载并轮询进度，下载完成后自动开始录音。
+- The recognition model is shared with DSH's built-in voice input; this plugin ships no model of its own.
+- Uninterrupted speech is split at `maxSpeechSeconds`; the correction pass usually repairs the punctuation seam.
+- The composer integration depends on DSH client slots and is untested against future releases.
 
-## 分发
+## License
 
-见 [PUBLISH.md](PUBLISH.md)：直接打包分发、发布到 npm、进入插件索引，以及发布前自检清单。
-
+MIT — see [LICENSE](LICENSE).
