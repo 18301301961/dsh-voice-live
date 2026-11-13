@@ -1,5 +1,8 @@
 # dsh-voice-live
 
+[![npm](https://img.shields.io/npm/v/dsh-voice-live.svg)](https://www.npmjs.com/package/dsh-voice-live)
+[![license](https://img.shields.io/npm/l/dsh-voice-live.svg)](LICENSE)
+
 Live streaming voice input for the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web composer.
 
 Speak, and words appear while you talk; press Done and the transcript is corrected once, then inserted into your draft.

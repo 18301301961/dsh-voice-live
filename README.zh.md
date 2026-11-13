@@ -1,5 +1,8 @@
 # dsh-voice-live
 
+[![npm](https://img.shields.io/npm/v/dsh-voice-live.svg)](https://www.npmjs.com/package/dsh-voice-live)
+[![license](https://img.shields.io/npm/l/dsh-voice-live.svg)](LICENSE)
+
 DeepSeek Harness 的**实时语音输入**插件：在输入框旁提供「边说边出字」的听写。
 
 说话时文字实时出现；点「完成」后，转写再做一次最小必要的校对，然后写入草稿。识别在本机完成，音频不上传。
