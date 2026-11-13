@@ -24,13 +24,31 @@ DeepSeek Harness 的**实时语音输入**插件：在输入框旁提供「边�
 
 ## 安装
 
-暂未发布到 npm。克隆仓库后，把目录作为 DSH bundle 安装（插件管理器传绝对路径，或直接让智能体安装）：
+### 从 npm 安装（发布之后）
+
+用包名安装（插件页，或让智能体安装）：
+
+```text
+@your-scope/dsh-voice-live
+```
+
+> 占位：正式发布后把作用域换成真实包名；`client.js` 里的浏览器模块 id 必须与包名一致。
+
+### 从仓库安装
 
 ```text
 git clone https://github.com/18301301961/dsh-voice-live.git
 ```
 
-安装后刷新一次页面，麦克风按钮出现在发送按钮左侧。
+然后把该目录作为 DSH bundle 安装（插件管理器传绝对路径，或让智能体安装）。
+
+### 从 git 源安装
+
+```text
+github:18301301961/dsh-voice-live#v1.1.0
+```
+
+安装后刷新一次页面，麦克风按钮出现在发送按钮左侧。完整分发说明见 [PUBLISH.zh.md](PUBLISH.zh.md)。
 
 ## 使用
 

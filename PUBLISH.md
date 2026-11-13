@@ -1,40 +1,54 @@
-# 发布与分发
+# Publishing and distribution
 
-当前包名是 `@local/voice-live`（`private: true`），只用于本机安装。要让别人安装，按下面任一条路走。
+The package is currently `@local/voice-live` (`private: true`) and installed from a local directory. Pick one of the paths below to let other people use it.
 
-## 一、直接分发（最快，无需账号）
+## 1. Hand the folder over (fastest, no account needed)
 
-1. 打包目录：把整个 `voice-live/` 压成 zip 发给对方。
-2. 对方解压后，在 DSH 里安装这个目录（插件管理器 `install_bundle`，target 传目录绝对路径），或用对话让智能体安装。
-3. 对方首次点麦克风时，插件会请求 DSH 自带的语音服务下载 SenseVoice 模型（约 240 MB），下载完成后自动开始，不需要手动操作。
+1. Zip `dsh-voice-live/` and send it.
+2. The recipient installs that directory as a DSH bundle — plugin manager `install_bundle` with the absolute path, or simply asks their agent to install it.
+3. On first use the plugin asks DSH's own speech service to download the SenseVoice model (~240 MB), shows progress, then starts recording by itself.
 
-## 二、发布到 npm（别人一条命令安装）
+## 2. Publish to npm (one-line install for everyone)
 
-1. 改包名：`package.json` 的 `name` 换成自己的作用域，例如 `@yourname/dsh-voice-live`；同时把 `"private": true` 去掉。
-2. 客户端注册 id 必须跟着改：`client.js` 第一行 `id: '@local/voice-live'` 要等于新的包名。
-3. 首次发布：
+1. Rename the package in `package.json` to your own scope, for example `@yourname/dsh-voice-live`, and remove `"private": true`.
+2. **Keep the client module id equal to the package name.** Line 1 of `client.js` must read `id: '@yourname/dsh-voice-live'`; a mismatch makes the browser module fail to load.
+3. Publish:
 
    ```bash
    npm login
    npm publish --access public
    ```
 
-4. 别人安装：插件管理器里用 `@yourname/dsh-voice-live` 这个 spec 安装，或者从 GitHub 地址安装。
+4. Others install the bundle by that package name, in the Plugins page or by asking their agent.
 
-## 三、进入「发现」页的插件索引
+Keep `git tag v<version>` in step with `package.json` so the repository, the npm tarball and the release notes agree.
 
-DSH 的 Discover 页读取外部插件索引（默认 `https://cdn.dsh.so/market/index.json`）。要让插件出现在那里，需要索引维护方收录；常见做法是把包发布到 npm 后，向索引仓库提 PR 或 issue，附上包名、标题、描述与图标。
+## 3. Install from a git source
 
-## 发布前自检清单
+A DSH installer also accepts git-like installation specs, so a repository can be installed without npm:
 
-- [ ] `package.json`：`name` / `version` / `license` / `engines.dsh` / `files` 与实际文件一致
-- [ ] `client.js` 的模块 id 与包名一致（不一致会导致客户端模块加载不出来）
-- [ ] `locale/en.json`、`locale/zh.json` 的 `meta.title` / `meta.description` 已本地化
-- [ ] `icon.svg` 有效、小于 256 KiB
-- [ ] 没有把本机路径、token、个人词表写进代码或 patch
-- [ ] 只声明运行时真实需要的依赖（本包无 npm 依赖）
-- [ ] 在另一台机器上从零安装并完成一次「模型下载 → 说话 → 写入草稿」
+```text
+github:18301301961/dsh-voice-live#v1.1.0
+```
 
-## 送上游 PR（可选）
+That pulls the sources and installs their dependencies, so it is slower and more fragile than npm in restricted networks.
 
-如果想进 DSH 官方插件集，做法是在 DSH 仓库新增一个 `packages/experimental/<name>` 包：Host 入口、`dsh.client` 客户端入口、`cordis.patch.yml`、locale、icon，并补 README 与测试；然后提 PR。本包的四个文件（`index.js`、`client.js`、`engine.mjs`、`worker.mjs`、`polish.mjs`）可以几乎原样搬过去，只需要按仓库规范拆成 `src/*.ts`。
+## 4. Getting listed in the Discover page
+
+The default index (`https://cdn.dsh.so/market/index.json`) is the **DSH.SO install-verified and security-audited market**: it only lists entries that passed a real sandbox install verification (L4/L5) with a low-risk security verdict. Each entry carries `name`, localized `title`/`description`, `author`, `repository.url`, a category plus keywords, and `versions[]` whose `source.type` is `npm` or `git` (optionally with a commit). Publish first, then use the submission path described on dsh.so — the index itself advertises no public PR process.
+
+## Pre-publish checklist
+
+- [ ] `package.json`: `name`, `version`, `license`, `engines.dsh`, `files` match the repository
+- [ ] `client.js` module id equals the package name
+- [ ] `locale/en.json` and `locale/zh.json` have localized `meta.title` / `meta.description`
+- [ ] `icon.svg` is valid and under 256 KiB
+- [ ] No machine paths, tokens or personal vocabulary lists in code or patch
+- [ ] No npm dependencies that are not actually used (this package has none)
+- [ ] Install from zero on a clean machine: model download → speak → text in the draft
+
+## Contributing upstream (optional)
+
+To become part of the official package set, add `packages/experimental/<name>` to the DSH repository: a Host entry, a `dsh.client` entry, `cordis.patch.yml`, locale files, an icon, a README and tests; then open a pull request. The five runtime files here (`index.js`, `client.js`, `engine.mjs`, `worker.mjs`, `polish.mjs`) port over almost unchanged — they only need splitting into `src/*.ts` following the repository conventions.
+
+[中文版](PUBLISH.zh.md)

@@ -25,6 +25,8 @@
     "icon.svg",
     "README.md",
     "README.zh.md",
+    "PUBLISH.md",
+    "PUBLISH.zh.md",
     "LICENSE"
   ],
   "dsh": {

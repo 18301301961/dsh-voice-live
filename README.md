@@ -25,13 +25,31 @@ Recognition runs on your machine — audio never leaves the computer.
 
 ## Install
 
-Not on npm yet. Clone this repository and install the directory as a DSH bundle — either through the plugin manager with the absolute path, or by asking your agent to install it:
+### From npm (after the first publish)
+
+Install the bundle by its package name — in the Plugins page, or by asking your agent to install it:
+
+```text
+@your-scope/dsh-voice-live
+```
+
+> Placeholder: replace the scope with the published name. The browser module id in `client.js` must stay equal to the package name.
+
+### From this repository
 
 ```text
 git clone https://github.com/18301301961/dsh-voice-live.git
 ```
 
-Reload the page once after installing; the microphone button appears to the left of the send button.
+Then install that directory as a DSH bundle — either through the plugin manager with the absolute path, or by asking your agent to install it.
+
+### From a git source
+
+```text
+github:18301301961/dsh-voice-live#v1.1.0
+```
+
+Reload the page once after installing; the microphone button appears to the left of the send button. See [PUBLISH.md](PUBLISH.md) for the full distribution guide.
 
 ## Usage
 
